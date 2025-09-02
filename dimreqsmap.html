@@ -137,8 +137,7 @@
             <!-- <label><input type="checkbox" class="layer-toggle" value="Overlay"> Overlays</label><br> -->
             <!-- <label><input type="checkbox" class="layer-toggle" value="Too-Little-Setback"> Insufficient front
                 setback</label><br> -->
-            <label><input type="checkbox" class="layer-toggle" value="Too-Much-Coverage"> Building coverage greater than
-                maximum allowed</label><br>
+            <label><input type="checkbox" class="layer-toggle" value="Usable-Open-Space"> Insufficient usable open space per DU</label><br>
             <label><input type="checkbox" class="layer-toggle" value="Zones" checked> Existing zoning</label><br>
             <label><input type="checkbox" class="layer-toggle" value="Uses"> Existing use</label>
         </div>
@@ -296,8 +295,8 @@
             // 'Too-Little-Setback': [
             //     { color: 'rgba(0, 0, 0, .2)', label: 'Front setback shallower than required by zone' }
             // ],
-            'Too-Much-Coverage': [
-                { color: 'rgba(0, 0, 0, .2)', label: 'Building coverage greater than maximum allowed' }
+            'Usable-Open-Space': [
+                { color: 'rgba(0, 0, 0, .2)', label: 'Not enough usable open space per dwelling unit' }
             ],
             // 'Too-Little-Frontage': [
             //     { color: 'black', label: 'Frontage narrower than required by zone' }
@@ -550,14 +549,14 @@
             // }, labelLayerId);
 
             map.addLayer({
-                id: 'Too-Much-Coverage',
+                id: 'Usable-Open-Space',
                 type: 'fill',
-                source: 'coverfront',
+                source: 'allparcels',
                 paint: {
                     'fill-color': [
                         'match',
-                        ['get', 'WalthamBuildingsv2_TooCovered'],
-                        "1", 'rgba(0, 0, 0, .25)',
+                        ['get', 'ncf_min_uos_per_du'],
+                        1, 'rgba(0, 0, 0, .25)',
                         'rgba(0, 0, 0, 0)' // default fallback color
                     ]
                 }
@@ -616,7 +615,7 @@
             // map.setLayoutProperty('Too-Little-Frontage', 'visibility', 'none');
             map.setLayoutProperty('Residential-Parcels-Smaller-than-Minimum-Lot-Size', 'visibility', 'none');
             map.setLayoutProperty('Lot-Sizes-of-Residential-Parcels', 'visibility', 'none');
-            map.setLayoutProperty('Too-Much-Coverage', 'visibility', 'none');
+            map.setLayoutProperty('Usable-Open-Space', 'visibility', 'none');
             // map.setLayoutProperty('Too-Little-Setback', 'visibility', 'none');
             // map.setLayoutProperty('Zones', 'visibility', 'none');
             // map.setLayoutProperty('Overlay', 'visibility', 'none');
@@ -633,7 +632,7 @@
                 'Residential-Parcels-Smaller-than-Minimum-Lot-Size': 'toosmallLegend',
                 'Lot-Sizes-of-Residential-Parcels': 'lotsizeLegend',
                 // 'Too-Little-Setback': 'toolittleSetbackLegend',
-                'Too-Much-Coverage': 'toomuchCoverageLegend',
+                'Usable-Open-Space': 'toomuchCoverageLegend',
                 'Zones': 'existzoneLegend'
                 // 'Overlay': 'overlayLegend'
                 // 'Proposed Zones': 'proposedLegend'
