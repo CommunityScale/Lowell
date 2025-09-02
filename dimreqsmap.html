@@ -134,12 +134,13 @@
                 frontage</label><br> -->
             <label><input type="checkbox" class="layer-toggle"
                     value="Residential-Parcels-Smaller-than-Minimum-Lot-Size"> Insufficient lot size</label><br>
+            <label><input type="checkbox" class="layer-toggle" value="Insufficient-Lot-Area-Per-DU"> Insufficient lot area per DU</label><br>
             <!-- <label><input type="checkbox" class="layer-toggle" value="Overlay"> Overlays</label><br> -->
             <!-- <label><input type="checkbox" class="layer-toggle" value="Too-Little-Setback"> Insufficient front
                 setback</label><br> -->
             <label><input type="checkbox" class="layer-toggle" value="Usable-Open-Space"> Insufficient usable open space per DU</label><br>
             <label><input type="checkbox" class="layer-toggle" value="Zones" checked> Existing zoning</label><br>
-            <label><input type="checkbox" class="layer-toggle" value="Uses"> Existing use</label>
+            <!-- <label><input type="checkbox" class="layer-toggle" value="Uses"> Existing use</label> -->
         </div>
     </div>
     <div id="map"></div>
@@ -304,6 +305,9 @@
             'Residential-Parcels-Smaller-than-Minimum-Lot-Size': [
                 { color: 'rgba(0, 0, 0, .2)', label: 'Lot smaller than required by zone' }
             ],
+            'Insufficient-Lot-Area-Per-DU': [
+                { color: 'rgba(0, 0, 0, .2)', label: 'Insufficient lot area per dwelling unit' }
+            ],
             'Lot-Sizes-of-Residential-Parcels': [
                 { color: lotSizePalette[0], label: 'Smaller than 4,000 sqft' },
                 { color: lotSizePalette[1], label: '4,000-5,000 sqft' },
@@ -378,10 +382,10 @@
             //     data: 'parcel-segments.geojson'
             // });
 
-            map.addSource('hydro', {
-                type: 'geojson',
-                data: 'hydrowalth.geojson'
-            });
+            // map.addSource('hydro', {
+            //     type: 'geojson',
+            //     data: 'hydrowalth.geojson'
+            // });
 
             map.addSource('Boundary', {
                 type: 'geojson',
@@ -404,29 +408,29 @@
             //     data: 'ProposedZone_25_08_15.geojson'
             // });
 
-            map.addSource('water', {
-                type: 'geojson',
-                data: 'https://raw.githubusercontent.com/CommunityScale/Waltham/refs/heads/main/water2.geojson'
-            });
+            // map.addSource('water', {
+            //     type: 'geojson',
+            //     data: 'https://raw.githubusercontent.com/CommunityScale/Waltham/refs/heads/main/water2.geojson'
+            // });
 
-            map.addSource('coverfront', {
-                type: 'geojson',
-                data: 'https://raw.githubusercontent.com/CommunityScale/Waltham/refs/heads/main/coverfront.geojson'
-            });
+            // map.addSource('coverfront', {
+            //     type: 'geojson',
+            //     data: 'https://raw.githubusercontent.com/CommunityScale/Waltham/refs/heads/main/coverfront.geojson'
+            // });
 
-            map.addLayer({
-                id: 'Uses',
-                type: 'fill',
-                source: 'allparcels',
-                paint: {
-                    'fill-color': ['match', ['string', ['get', 'SimplLU']], ...usesAndColors, '#AAAAAA'],
-                    'fill-opacity': [
-                        "case",
-                        ["boolean", ["feature-state", "hover"], false],
-                        0.5,
-                        1],
-                }
-            }, labelLayerId);
+            // map.addLayer({
+            //     id: 'Uses',
+            //     type: 'fill',
+            //     source: 'allparcels',
+            //     paint: {
+            //         'fill-color': ['match', ['string', ['get', 'SimplLU']], ...usesAndColors, '#AAAAAA'],
+            //         'fill-opacity': [
+            //             "case",
+            //             ["boolean", ["feature-state", "hover"], false],
+            //             0.5,
+            //             1],
+            //     }
+            // }, labelLayerId);
 
             map.addLayer({
                 id: 'Zones',
@@ -506,21 +510,36 @@
                     'fill-color': [
                         'match',
                         ['get', 'res_ncf_min_lot_size'],
-                        1, 'rgba(0, 0, 0, .25)',
-                        'rgba(0, 0, 0, 0)' // default fallback color
+                        '1', 'rgba(0, 0, 0, .25)',  // String "1" instead of number 1
+                        'rgba(0, 0, 0, 0)'
                     ]
                 }
             }, labelLayerId);
 
-            map.addLayer({
-                id: 'hydro',
-                type: 'fill',
-                source: 'hydro',
-                paint: {
-                    'fill-color': '#d9eaf0'
-                }
 
+            map.addLayer({
+                id: 'Insufficient-Lot-Area-Per-DU',
+                type: 'fill',
+                source: 'allparcels',
+                paint: {
+                    'fill-color': [
+                        'match',
+                        ['get', 'res_ncf_min_lot_area_per_du'],
+                        '1', 'rgba(0, 0, 0, .25)',  // String "1" instead of number 1
+                        'rgba(0, 0, 0, 0)'
+                    ]
+                }
             }, labelLayerId);
+
+            // map.addLayer({
+            //     id: 'hydro',
+            //     type: 'fill',
+            //     source: 'hydro',
+            //     paint: {
+            //         'fill-color': '#d9eaf0'
+            //     }
+
+            // }, labelLayerId);
             
             map.addLayer({
                 id: 'Parcels',
@@ -555,9 +574,9 @@
                 paint: {
                     'fill-color': [
                         'match',
-                        ['get', 'ncf_min_uos_per_du'],
-                        1, 'rgba(0, 0, 0, .25)',
-                        'rgba(0, 0, 0, 0)' // default fallback color
+                        ['get', 'res_ncf_min_uos_per_du'],
+                        '1', 'rgba(0, 0, 0, .25)',  // String "1" instead of number 1
+                        'rgba(0, 0, 0, 0)'
                     ]
                 }
             }, labelLayerId);
@@ -606,24 +625,23 @@
                 }
             }, labelLayerId);
 
-
-
             window.addEventListener('resize', () => {
                 map.resize();
             });
 
             // map.setLayoutProperty('Too-Little-Frontage', 'visibility', 'none');
             map.setLayoutProperty('Residential-Parcels-Smaller-than-Minimum-Lot-Size', 'visibility', 'none');
+            map.setLayoutProperty('Insufficient-Lot-Area-Per-DU', 'visibility', 'none');
             map.setLayoutProperty('Lot-Sizes-of-Residential-Parcels', 'visibility', 'none');
             map.setLayoutProperty('Usable-Open-Space', 'visibility', 'none');
             // map.setLayoutProperty('Too-Little-Setback', 'visibility', 'none');
             // map.setLayoutProperty('Zones', 'visibility', 'none');
             // map.setLayoutProperty('Overlay', 'visibility', 'none');
-            map.setLayoutProperty('Uses', 'visibility', 'none');
+            // map.setLayoutProperty('Uses', 'visibility', 'none');
             map.setLayoutProperty('settlement-major-label', 'visibility', 'visible');
             map.setLayoutProperty('settlement-subdivision-label', 'visibility', 'visible');
             map.setLayoutProperty('settlement-minor-label', 'visibility', 'visible');
-            map.moveLayer('road-label', 'Zones');
+            // map.moveLayer('road-label', 'Zones');
 
             const checkboxes = document.querySelectorAll('.layer-toggle');
 
@@ -647,7 +665,7 @@
                         map.setLayoutProperty('settlement-major-label', 'visibility', 'visible');
                         map.setLayoutProperty('settlement-subdivision-label', 'visibility', 'visible');
                         map.setLayoutProperty('settlement-minor-label', 'visibility', 'visible');
-                        map.setLayoutProperty('road-label', 'visibility', 'visible');
+                        // map.setLayoutProperty('road-label', 'visibility', 'visible');
                     }
 
                     // Instead of trying to show/hide predefined legends, let's dynamically rebuild
@@ -727,8 +745,8 @@
 
             const hoverLayers = [
                 { id: 'Zones', source: 'allparcels' },
-                { id: 'Lot-Sizes-of-Residential-Parcels', source: 'allparcels' },
-                { id: 'Uses', source: 'allparcels' }
+                { id: 'Lot-Sizes-of-Residential-Parcels', source: 'allparcels' }
+                // { id: 'Uses', source: 'allparcels' }
             ];
 
             hoverLayers.forEach(({ id, source }) => {
@@ -763,7 +781,7 @@
 
             map.on('click', (e) => {
                 const [selectedParcel] = map.queryRenderedFeatures(e.point, {
-                    layers: ["Zones", "Uses", "Lot-Sizes-of-Residential-Parcels"]
+                    layers: ["Zones", "Lot-Sizes-of-Residential-Parcels"]
                 });
 
                 if (selectedParcel) {
@@ -773,16 +791,16 @@
                         return slicedWords.join(" ");
                     }
 
-                    const address = selectedParcel.properties.Address.replace(/,/g, "");
+                    const address = selectedParcel.properties.SiteAddress.replace(/,/g, "");
                     const num = 4;
                     const result = sliceStringBySpaces(address, num);
 
-                    const zone = selectedParcel.properties.NAME;
+                    const zone = selectedParcel.properties.ZONE;
                     const displayZone = zone === null || zone === undefined ? 'No available data' : `Zoning district: ${zone}`;
-                    const use = selectedParcel.properties.SimplLU;
-                    const useDescription = useLabels[use] || "Unknown use";
-                    const displayUse = use === null || use === undefined ? 'Unknown use' : `Current use: ${useDescription}`;
-                    const lotSize = selectedParcel.properties.SQFT;
+                    // const use = selectedParcel.properties.SimplLU;
+                    // const useDescription = useLabels[use] || "Unknown use";
+                    // const displayUse = use === null || use === undefined ? 'Unknown use' : `Current use: ${useDescription}`;
+                    const lotSize = selectedParcel.properties.res_lot_size_sf;
                     const roundedLotSize = Math.round(lotSize)
                     const displaySize = lotSize === null || lotSize === undefined ? 'No available data' : `Lot size: ${roundedLotSize.toLocaleString("en-US")} square feet`;
 
@@ -793,7 +811,7 @@
                 <div class="mapboxgl-popup">
                 <div class="mapboxgl-popup-close-button">x</div>
                 <div class="mapboxgl-popup-header">${result}</div>
-                <div class="mapboxgl-popup-content">${displayZone}<br>${displayUse}<br>${displaySize}
+                <div class="mapboxgl-popup-content">${displayZone}<br>${displaySize}
                 </div>
             </div>`)
                         .addTo(map);
