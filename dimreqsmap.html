@@ -130,16 +130,16 @@
 
             <label><input type="checkbox" class="layer-toggle" value="Lot-Sizes-of-Residential-Parcels"> Lot
                 size</label><br>
-            <label><input type="checkbox" class="layer-toggle" value="Too-Little-Frontage"> Insufficient
-                frontage</label><br>
+            <!-- <label><input type="checkbox" class="layer-toggle" value="Too-Little-Frontage"> Insufficient
+                frontage</label><br> -->
             <label><input type="checkbox" class="layer-toggle"
                     value="Residential-Parcels-Smaller-than-Minimum-Lot-Size"> Insufficient lot size</label><br>
             <!-- <label><input type="checkbox" class="layer-toggle" value="Overlay"> Overlays</label><br> -->
-            <label><input type="checkbox" class="layer-toggle" value="Too-Little-Setback"> Insufficient front
-                setback</label><br>
+            <!-- <label><input type="checkbox" class="layer-toggle" value="Too-Little-Setback"> Insufficient front
+                setback</label><br> -->
             <label><input type="checkbox" class="layer-toggle" value="Too-Much-Coverage"> Building coverage greater than
                 maximum allowed</label><br>
-            <label><input type="checkbox" class="layer-toggle" value="Zones"> Existing zoning</label><br>
+            <label><input type="checkbox" class="layer-toggle" value="Zones" checked> Existing zoning</label><br>
             <label><input type="checkbox" class="layer-toggle" value="Uses"> Existing use</label>
         </div>
     </div>
@@ -293,15 +293,15 @@
 
         const lotSizeBreakpoints = [0, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 15000, 20000];
         const legendEntries = {
-            'Too-Little-Setback': [
-                { color: 'rgba(0, 0, 0, .2)', label: 'Front setback shallower than required by zone' }
-            ],
+            // 'Too-Little-Setback': [
+            //     { color: 'rgba(0, 0, 0, .2)', label: 'Front setback shallower than required by zone' }
+            // ],
             'Too-Much-Coverage': [
                 { color: 'rgba(0, 0, 0, .2)', label: 'Building coverage greater than maximum allowed' }
             ],
-            'Too-Little-Frontage': [
-                { color: 'black', label: 'Frontage narrower than required by zone' }
-            ],
+            // 'Too-Little-Frontage': [
+            //     { color: 'black', label: 'Frontage narrower than required by zone' }
+            // ],
             'Residential-Parcels-Smaller-than-Minimum-Lot-Size': [
                 { color: 'rgba(0, 0, 0, .2)', label: 'Lot smaller than required by zone' }
             ],
@@ -374,12 +374,12 @@
             })
 
 
-            map.addSource('frontage', {
-                type: 'geojson',
-                data: 'https://raw.githubusercontent.com/CommunityScale/Waltham/main/frontages.geojson'
-            });
+            // map.addSource('frontage', {
+            //     type: 'geojson',
+            //     data: 'parcel-segments.geojson'
+            // });
 
-                        map.addSource('hydro', {
+            map.addSource('hydro', {
                 type: 'geojson',
                 data: 'hydrowalth.geojson'
             });
@@ -388,8 +388,6 @@
                 type: 'geojson',
                 data: 'lowell_outline.geojson'
             });
-
-
 
             map.addSource('allparcels', {
                 type: 'geojson',
@@ -508,7 +506,7 @@
                 paint: {
                     'fill-color': [
                         'match',
-                        ['get', 'ncf_min_lot_size'],
+                        ['get', 'res_ncf_min_lot_size'],
                         1, 'rgba(0, 0, 0, .25)',
                         'rgba(0, 0, 0, 0)' // default fallback color
                     ]
@@ -524,6 +522,7 @@
                 }
 
             }, labelLayerId);
+            
             map.addLayer({
                 id: 'Parcels',
                 type: 'fill',
@@ -535,20 +534,20 @@
                 }
             }, labelLayerId);
 
-            map.addLayer({
-                id: 'Too-Little-Frontage',
-                type: 'line',
-                source: 'frontage',
-                paint: {
-                    'line-width': 4,
-                    'line-color': [
-                        'match',
-                        ['get', 'TooLilFrnt'],
-                        1, 'black',
-                        'transparent' // default fallback color
-                    ],
-                }
-            }, labelLayerId);
+            // map.addLayer({
+            //     id: 'Too-Little-Frontage',
+            //     type: 'line',
+            //     source: 'frontage',
+            //     paint: {
+            //         'line-width': 4,
+            //         'line-color': [
+            //             'match',
+            //             ['get', 'ncf_min_frontage'],
+            //             1, 'black',
+            //             'transparent' // default fallback color
+            //         ],
+            //     }
+            // }, labelLayerId);
 
             map.addLayer({
                 id: 'Too-Much-Coverage',
@@ -564,19 +563,19 @@
                 }
             }, labelLayerId);
 
-            map.addLayer({
-                id: 'Too-Little-Setback',
-                type: 'fill',
-                source: 'coverfront',
-                paint: {
-                    'fill-color': [
-                        'match',
-                        ['get', 'WalthamBuildingsv2_TooLilSB'],
-                        "1", 'rgba(0, 0, 0, .25)',
-                        'rgba(0, 0, 0, 0)' // default fallback color
-                    ]
-                }
-            }, labelLayerId);
+            // map.addLayer({
+            //     id: 'Too-Little-Setback',
+            //     type: 'fill',
+            //     source: 'coverfront',
+            //     paint: {
+            //         'fill-color': [
+            //             'match',
+            //             ['get', 'WalthamBuildingsv2_TooLilSB'],
+            //             "1", 'rgba(0, 0, 0, .25)',
+            //             'rgba(0, 0, 0, 0)' // default fallback color
+            //         ]
+            //     }
+            // }, labelLayerId);
 
 
             // map.addLayer({
@@ -614,12 +613,12 @@
                 map.resize();
             });
 
-            map.setLayoutProperty('Too-Little-Frontage', 'visibility', 'none');
+            // map.setLayoutProperty('Too-Little-Frontage', 'visibility', 'none');
             map.setLayoutProperty('Residential-Parcels-Smaller-than-Minimum-Lot-Size', 'visibility', 'none');
             map.setLayoutProperty('Lot-Sizes-of-Residential-Parcels', 'visibility', 'none');
             map.setLayoutProperty('Too-Much-Coverage', 'visibility', 'none');
-            map.setLayoutProperty('Too-Little-Setback', 'visibility', 'none');
-            map.setLayoutProperty('Zones', 'visibility', 'none');
+            // map.setLayoutProperty('Too-Little-Setback', 'visibility', 'none');
+            // map.setLayoutProperty('Zones', 'visibility', 'none');
             // map.setLayoutProperty('Overlay', 'visibility', 'none');
             map.setLayoutProperty('Uses', 'visibility', 'none');
             map.setLayoutProperty('settlement-major-label', 'visibility', 'visible');
@@ -630,10 +629,10 @@
             const checkboxes = document.querySelectorAll('.layer-toggle');
 
             const legends = {
-                'Too-Little-Frontage': 'frontageLegend',
+                // 'Too-Little-Frontage': 'frontageLegend',
                 'Residential-Parcels-Smaller-than-Minimum-Lot-Size': 'toosmallLegend',
                 'Lot-Sizes-of-Residential-Parcels': 'lotsizeLegend',
-                'Too-Little-Setback': 'toolittleSetbackLegend',
+                // 'Too-Little-Setback': 'toolittleSetbackLegend',
                 'Too-Much-Coverage': 'toomuchCoverageLegend',
                 'Zones': 'existzoneLegend'
                 // 'Overlay': 'overlayLegend'
