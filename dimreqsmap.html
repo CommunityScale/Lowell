@@ -140,7 +140,7 @@
                 setback</label><br> -->
             <label><input type="checkbox" class="layer-toggle" value="Usable-Open-Space"> Insufficient usable open space per DU</label><br>
             <label><input type="checkbox" class="layer-toggle" value="Zones" checked> Existing zoning</label><br>
-            <!-- <label><input type="checkbox" class="layer-toggle" value="Uses"> Existing use</label> -->
+            <label><input type="checkbox" class="layer-toggle" value="Uses"> Existing use</label>
         </div>
     </div>
     <div id="map"></div>
@@ -163,37 +163,35 @@
         ]
 
         const uses = [
-            "Public/Ins",
-            "Single-fam",
+            "Public/Institutional (including open space)",
+            "Single-family",
             "Vacant",
-            "Multi-fami",
-            "Industrial",
-            "Three-fami",
+            "Multi-family",
+            "Industrial, auto, utility, storage",
+            "Three-family",
             "Two-family",
-            "Other hous",
+            "Other housing",
             "Commercial",
             "Mixed-use",
             "Other",
-            "Hotel",
-            "Recreation",
-            "Nursing ho"
+            "Recreation"
         ]
 
         const useLabels = {
-            "Public/Ins": "Public/Institutional (including open space)",
-            "Single-fam": "Single-family",
+            "Public/Institutional (including open space)": "Public/Institutional (including open space)",
+            "Single-family": "Single-family",
             "Two-family": "Two-family",
-            "Three-fami": "Three-family",
-            "Multi-fami": "Multi-family",
-            "Other hous": "Other housing",
+            "Three-family": "Three-family",
+            "Multi-family": "Multi-family",
+            "Other housing": "Other housing",
             "Hotel": "Hotel",
             "Commercial": "Commercial (retail, office)",
             "Mixed-use": "Mixed-use",
             "Recreation": "Recreation",
-            "Industrial": "Industrial, auto, utility, storage",
+            "Industrial, auto, utility, storage": "Industrial, auto, utility, storage",
             "Vacant": "Vacant",
             "Nursing ho": "Public/Institutional (including open space)",
-            "Other": "Other use"
+            "Other use": "Other use"
         };
 
         const useColors = [
@@ -208,9 +206,7 @@
             "#f2b1c2", // pink
             "#d899dd", // fuchsia
             "#767676", // black
-            "#ff6969", // peach
-            "#8adfa9", // green (again)
-            "#cf820f"  // 
+            "#8adfa9" // green (again)
         ];
 
         const usesAndColors = uses.flatMap((use, i) => [use, useColors[i]]);
@@ -334,10 +330,9 @@
                 { color: useColors[5], label: 'Three-family' },
                 { color: useColors[3], label: 'Multi-family' },
                 { color: useColors[7], label: 'Other housing' },
-                { color: useColors[11], label: 'Hotel' },
-                { color: useColors[8], label: 'Commercial (retail, office)' },
+                { color: useColors[8], label: 'Commercial' },
                 { color: useColors[9], label: 'Mixed-use' },
-                { color: useColors[12], label: 'Recreation' },
+                { color: useColors[11], label: 'Recreation' },
                 { color: useColors[4], label: 'Industrial, auto, utility, storage' },
                 { color: useColors[0], label: 'Public/Institutional (including open space)' },
                 { color: useColors[2], label: 'Vacant' },
@@ -418,19 +413,19 @@
             //     data: 'https://raw.githubusercontent.com/CommunityScale/Waltham/refs/heads/main/coverfront.geojson'
             // });
 
-            // map.addLayer({
-            //     id: 'Uses',
-            //     type: 'fill',
-            //     source: 'allparcels',
-            //     paint: {
-            //         'fill-color': ['match', ['string', ['get', 'SimplLU']], ...usesAndColors, '#AAAAAA'],
-            //         'fill-opacity': [
-            //             "case",
-            //             ["boolean", ["feature-state", "hover"], false],
-            //             0.5,
-            //             1],
-            //     }
-            // }, labelLayerId);
+            map.addLayer({
+                id: 'Uses',
+                type: 'fill',
+                source: 'allparcels',
+                paint: {
+                    'fill-color': ['match', ['string', ['get', 'UseCategory']], ...usesAndColors, '#AAAAAA'],
+                    'fill-opacity': [
+                        "case",
+                        ["boolean", ["feature-state", "hover"], false],
+                        0.5,
+                        1],
+                }
+            }, labelLayerId);
 
             map.addLayer({
                 id: 'Zones',
@@ -637,7 +632,7 @@
             // map.setLayoutProperty('Too-Little-Setback', 'visibility', 'none');
             // map.setLayoutProperty('Zones', 'visibility', 'none');
             // map.setLayoutProperty('Overlay', 'visibility', 'none');
-            // map.setLayoutProperty('Uses', 'visibility', 'none');
+            map.setLayoutProperty('Uses', 'visibility', 'none');
             map.setLayoutProperty('settlement-major-label', 'visibility', 'visible');
             map.setLayoutProperty('settlement-subdivision-label', 'visibility', 'visible');
             map.setLayoutProperty('settlement-minor-label', 'visibility', 'visible');
@@ -651,9 +646,10 @@
                 'Lot-Sizes-of-Residential-Parcels': 'lotsizeLegend',
                 // 'Too-Little-Setback': 'toolittleSetbackLegend',
                 'Usable-Open-Space': 'toomuchCoverageLegend',
-                'Zones': 'existzoneLegend'
+                'Zones': 'existzoneLegend',
                 // 'Overlay': 'overlayLegend'
                 // 'Proposed Zones': 'proposedLegend'
+                'Uses': 'useLegend'
             };
 
             checkboxes.forEach((checkbox) => {
@@ -745,8 +741,8 @@
 
             const hoverLayers = [
                 { id: 'Zones', source: 'allparcels' },
-                { id: 'Lot-Sizes-of-Residential-Parcels', source: 'allparcels' }
-                // { id: 'Uses', source: 'allparcels' }
+                { id: 'Lot-Sizes-of-Residential-Parcels', source: 'allparcels' },
+                { id: 'Uses', source: 'allparcels' }
             ];
 
             hoverLayers.forEach(({ id, source }) => {
@@ -797,9 +793,9 @@
 
                     const zone = selectedParcel.properties.ZONE;
                     const displayZone = zone === null || zone === undefined ? 'No available data' : `Zoning district: ${zone}`;
-                    // const use = selectedParcel.properties.SimplLU;
+                    const use = selectedParcel.properties.UseCategory;
                     // const useDescription = useLabels[use] || "Unknown use";
-                    // const displayUse = use === null || use === undefined ? 'Unknown use' : `Current use: ${useDescription}`;
+                    const displayUse = use === null || use === undefined ? 'Unknown use' : `Current use: ${use}`;
                     const lotSize = selectedParcel.properties.res_lot_size_sf;
                     const roundedLotSize = Math.round(lotSize)
                     const displaySize = lotSize === null || lotSize === undefined ? 'No available data' : `Lot size: ${roundedLotSize.toLocaleString("en-US")} square feet`;
@@ -811,7 +807,7 @@
                 <div class="mapboxgl-popup">
                 <div class="mapboxgl-popup-close-button">x</div>
                 <div class="mapboxgl-popup-header">${result}</div>
-                <div class="mapboxgl-popup-content">${displayZone}<br>${displaySize}
+                <div class="mapboxgl-popup-content">${displayZone}<br>${displayUse}<br>${displaySize}
                 </div>
             </div>`)
                         .addTo(map);
