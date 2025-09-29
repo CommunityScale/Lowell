@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Basic Meta Tags -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Lowell Zoning Ordinance Audit - Modernizing Lowell's Blueprint for Growth. Comprehensive analysis and recommendations for zoning code rewrite.">
+  <meta name="keywords" content="zoning ordinance, Lowell, audit, planning, housing, development, municipal code">
+  <meta name="author" content="CommunityScale">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="en">
+  <meta name="theme-color" content="#3B82F6">
+  <meta name="color-scheme" content="light dark">
+
+  <!-- Title -->
+  <title>Lowell Zoning Ordinance Audit - Modernizing Lowell's Blueprint for Growth</title>
+
+  <!-- Security Headers -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+
+  <!-- Performance & Caching -->
+  <meta http-equiv="Cache-Control" content="public, max-age=31536000">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'sans': ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Arial', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Additional styling to match the original SVG appearance */
+    .material-icons-outlined {
+      font-size: 1.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    /* Critical CSS for performance */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f9fafb;
+      color: #374151;
+      font-display: swap;
+    }
+
+    .nav-link {
+      transition: color 0.2s;
+    }
+    .nav-link:hover, .nav-link.active {
+      color: #3B82F6;
+    }
+    .card {
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    .tab-btn.active {
+      border-color: #3B82F6;
+      color: #3B82F6;
+      font-weight: 600;
+    }
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 300px;
+      max-height: 400px;
+    }
+    @media (min-width: 768px) {
+      .chart-container {
+        height: 400px;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between gap-x-6 p-6 lg:px-8" aria-label="Global">
+      <div class="flex lg:flex-1">
+        <a href="#" class="-m-1.5 p-1.5">
+          <span class="sr-only">Lowell Zoning Ordinance Audit</span>
+          <img class="h-8 w-auto" src="https://hfmock.pages.dev/cslogo.svg" alt="" />
+        </a>
+        <h1 class="hidden lg:block ml-4 text-xl font-bold text-gray-800 self-center">Lowell Zoning Ordinance Audit</h1>
+      </div>
+      
+      <div class="hidden lg:flex lg:gap-x-12">
+        <a href="#vision" class="nav-link text-sm/6 font-semibold text-gray-900">Vision</a>
+        <a href="#findings" class="nav-link text-sm/6 font-semibold text-gray-900">Major Findings</a>
+        <a href="#data-vis" class="nav-link text-sm/6 font-semibold text-gray-900">Data Visualization</a>
+        <a href="#analysis" class="nav-link text-sm/6 font-semibold text-gray-900">Detailed Analysis</a>
+        <a href="#recommendations" class="nav-link text-sm/6 font-semibold text-gray-900">Recommendations</a>
+      </div>
+
+      <div class="flex lg:hidden">
+        <button type="button" id="mobile-menu-button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
+          <span class="sr-only">Open main menu</span>
+          <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="lg:hidden hidden" role="dialog" aria-modal="true">
+      <div class="fixed inset-0 z-50"></div>
+      <div class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+        <div class="flex items-center gap-x-6">
+          <a href="#" class="-m-1.5 p-1.5">
+            <span class="sr-only">Lowell Zoning Ordinance Audit</span>
+            <span class="text-lg font-bold text-gray-900">Lowell Zoning</span>
+          </a>
+          <button type="button" class="ml-auto -m-2.5 rounded-md p-2.5 text-gray-700" onclick="toggleMobileMenu()">
+            <span class="sr-only">Close menu</span>
+            <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="mt-6 flow-root">
+          <div class="-my-6 divide-y divide-gray-500/10">
+            <div class="space-y-2 py-6">
+              <a href="#vision" class="block py-2 nav-link text-gray-600">Vision</a>
+              <a href="#findings" class="block py-2 nav-link text-gray-600">Major Findings</a>
+              <a href="#data-vis" class="block py-2 nav-link text-gray-600">Data Visualization</a>
+              <a href="#analysis" class="block py-2 nav-link text-gray-600">Detailed Analysis</a>
+              <a href="#recommendations" class="block py-2 nav-link text-gray-600">Recommendations</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-6 py-12">
+
+    <!-- Vision Section -->
+    <section id="vision" class="text-center mb-24">
+      <h2 class="text-4xl font-bold mb-4 text-[#4A5568]">Modernizing Lowell's Blueprint for Growth</h2>
+      <p class="max-w-3xl mx-auto text-lg text-gray-600">
+        This audit analyzes the current Lowell Zoning Ordinance to pave the way for a comprehensive rewrite. The goal is to create a modern, user-friendly, and equitable code that aligns with the City's vision, encourages housing production, and reflects the dynamic needs of the 21st century. We aim to transform the ordinance from a regulatory barrier into a proactive tool for shaping a vibrant and sustainable future for Lowell.
+      </p>
+    </section>
+
+    <!-- Major Findings Section -->
+    <section id="findings" class="mb-24">
+      <h2 class="text-3xl font-bold text-center mb-12 text-[#4A5568]">Major Findings</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="card bg-white p-6 rounded-lg shadow-md border-t-4 border-blue-400">
+          <div class="text-4xl mb-4">📖</div>
+          <h3 class="text-xl font-semibold mb-2">Usability & Organization</h3>
+          <p class="text-gray-600">The current code is difficult to navigate, with excessive cross-referencing, a lack of clear tables and graphics, and inconsistent formatting. This creates barriers for residents, developers, and even staff.</p>
+        </div>
+        <div class="card bg-white p-6 rounded-lg shadow-md border-t-4 border-green-400">
+          <div class="text-4xl mb-4">🏠</div>
+          <h3 class="text-xl font-semibold mb-2">Housing & Modernization</h3>
+          <p class="text-gray-600">Outdated use categories and dimensional standards hinder the production of diverse housing types. The code lacks flexibility to accommodate modern living, working, and sustainability goals.</p>
+        </div>
+        <div class="card bg-white p-6 rounded-lg shadow-md border-t-4 border-yellow-400">
+          <div class="text-4xl mb-4">🗺️</div>
+          <h3 class="text-xl font-semibold mb-2">Districts & Uses</h3>
+          <p class="text-gray-600">An excessive number of zoning districts with subtle, confusing distinctions creates complexity. The Table of Uses is unwieldy and could be simplified to provide greater clarity and predictability.</p>
+        </div>
+        <div class="card bg-white p-6 rounded-lg shadow-md border-t-4 border-red-400">
+          <div class="text-4xl mb-4">⚖️</div>
+          <h3 class="text-xl font-semibold mb-2">Process & Administration</h3>
+          <p class="text-gray-600">Review and approval processes are often convoluted. There are significant opportunities to streamline procedures for special permits, site plan review, and variances to save time and resources for all parties.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data Visualization Section -->
+    <section id="data-vis" class="mb-24 bg-gray-50 p-8 rounded-lg">
+      <h2 class="text-3xl font-bold text-center mb-4 text-[#4A5568]">Zoning District Complexity</h2>
+       <p class="max-w-3xl mx-auto text-center text-gray-600 mb-8">
+        The sheer number of zoning districts adds significant complexity. This visualization helps compare the regulatory burden across different types of districts. Use the filter to see how the number and type of use regulations vary, illustrating the need for simplification and consolidation. A simpler district map leads to a more predictable and user-friendly code.
+      </p>
+      <div class="text-center mb-8">
+        <select id="chartFilter" class="p-2 border rounded-md shadow-sm">
+          <option value="total">Total Use Regulations</option>
+          <option value="permitted">Permitted Uses (By-Right)</option>
+          <option value="special">Special Permit Uses</option>
+        </select>
+      </div>
+      <div class="chart-container">
+        <canvas id="districtsChart"></canvas>
+      </div>
+    </section>
+
+    <!-- Detailed Analysis Section -->
+    <section id="analysis" class="mb-24">
+      <h2 class="text-3xl font-bold text-center mb-12 text-[#4A5568]">Detailed Analysis</h2>
+      <div class="max-w-4xl mx-auto">
+        <div class="flex border-b border-gray-300 mb-8">
+          <button class="tab-btn flex-1 py-3 px-4 text-center text-gray-500 border-b-2 border-transparent" data-tab="usability">Usability & Organization</button>
+          <button class="tab-btn flex-1 py-3 px-4 text-center text-gray-500 border-b-2 border-transparent" data-tab="housing">Housing & Modernization</button>
+          <button class="tab-btn flex-1 py-3 px-4 text-center text-gray-500 border-b-2 border-transparent" data-tab="districts">Districts & Uses</button>
+          <button class="tab-btn flex-1 py-3 px-4 text-center text-gray-500 border-b-2 border-transparent" data-tab="process">Process & Administration</button>
+        </div>
+        <div id="tab-content" class="bg-white p-8 rounded-lg shadow-inner">
+            <div id="usability-content" class="tab-pane">
+              <h3 class="text-2xl font-semibold mb-4 text-gray-900">Finding a Needle in a Haystack</h3>
+              <p class="text-gray-700 mb-6 leading-relaxed">A zoning code should be accessible to everyone, not just lawyers and planners. Lowell's current ordinance falls short in this regard. The document's structure is difficult to follow, forcing users to jump between sections to find a single answer. The instruction to remove all cross-references is a key first step towards a standalone, comprehensible document.</p>
+              <ul class="list-disc list-inside space-y-3 text-gray-700">
+                <li><strong class="text-gray-900">Eliminate Cross-References:</strong> Each section should contain all necessary information, avoiding references that require flipping back and forth.</li>
+                <li><strong class="text-gray-900">Incorporate Visuals:</strong> The lack of tables, charts, and illustrations is a major deficiency. A modern code should use graphics to explain complex concepts like setbacks, lot coverage, and building form.</li>
+                <li><strong class="text-gray-900">Plain Language:</strong> Technical jargon should be minimized. Definitions need to be clear, concise, and located in a single, easy-to-find article.</li>
+                <li><strong class="text-gray-900">Digital-First Format:</strong> The rewrite should be designed for online use, with hyperlinks, search functionality, and a logical structure that translates well to a web-based platform.</li>
+              </ul>
+            </div>
+            <div id="housing-content" class="tab-pane hidden">
+              <h3 class="text-2xl font-semibold mb-4 text-gray-900">Unlocking Housing Opportunity</h3>
+              <p class="text-gray-700 mb-6 leading-relaxed">The City's housing goals cannot be met with an outdated ordinance. The current code contains numerous impediments to the development of "missing middle" housing, innovative housing types, and density where it's needed most. A modern code must be proactive about encouraging housing.</p>
+              <ul class="list-disc list-inside space-y-3 text-gray-700">
+                <li><strong class="text-gray-900">Accessory Dwelling Units (ADUs):</strong> Now mandated by the state, the code must be updated to clearly define standards for ADUs to facilitate their creation.</li>
+                <li><strong class="text-gray-900">Flexible Dimensional Standards:</strong> Review minimum lot sizes, setbacks, and parking requirements that often make multi-family or cottage court developments infeasible.</li>
+                <li><strong class="text-gray-900">Modern Use Definitions:</strong> The code needs to define and permit modern living arrangements, such as co-living, and better differentiate between various multi-family structures.</li>
+                <li><strong class="text-gray-900">Parking Reform:</strong> Reduce or eliminate parking minimums, especially in transit-accessible areas, to lower construction costs and encourage more efficient land use.</li>
+              </ul>
+            </div>
+            <div id="districts-content" class="tab-pane hidden">
+              <h3 class="text-2xl font-semibold mb-4 text-gray-900">From Complex to Coherent</h3>
+              <p class="text-gray-700 mb-6 leading-relaxed">The current zoning map is a patchwork of too many districts, many of which are only marginally different from one another. This complexity creates confusion and does not always align with the on-the-ground reality or the city's future vision. The use regulations within these districts are often just as convoluted.</p>
+              <ul class="list-disc list-inside space-y-3 text-gray-700">
+                <li><strong class="text-gray-900">District Consolidation:</strong> Analyze the existing districts and consolidate those with similar intent and standards. This will create a cleaner, more intuitive zoning map.</li>
+                <li><strong class="text-gray-900">Hybrid Zoning Approach:</strong> Embrace a hybrid model. A form-based code is appropriate for the Downtown and Hamilton Canal District to regulate physical form and public space, while a simplified, modern Euclidean system can work for other parts of the city.</li>
+                <li><strong class="text-gray-900">Simplified Table of Uses:</strong> Reorganize the use table by category (e.g., Residential, Commercial, Industrial) rather than an alphabetical list. Clearly indicate whether a use is permitted (P), requires a special permit (SP), or is prohibited (N).</li>
+                <li><strong class="text-gray-900">New, Flexible Districts:</strong> Consider creating new mixed-use or flexible overlay districts to encourage dynamic, walkable neighborhoods that align with the Comprehensive Plan.</li>
+              </ul>
+            </div>
+            <div id="process-content" class="tab-pane hidden">
+              <h3 class="text-2xl font-semibold mb-4 text-gray-900">Creating a Predictable Path</h3>
+              <p class="text-gray-700 mb-6 leading-relaxed">An unclear and lengthy approval process adds uncertainty, cost, and frustration for applicants and the public alike. The ordinance rewrite is an opportunity to clarify roles, establish clear criteria, and streamline procedures to be more efficient and predictable.</p>
+              <ul class="list-disc list-inside space-y-3 text-gray-700">
+                <li><strong class="text-gray-900">Clear Submission Checklists:</strong> Provide explicit checklists for each application type (variance, special permit, site plan review) so applicants know exactly what is required.</li>
+                <li><strong class="text-gray-900">Objective Criteria:</strong> Wherever possible, replace subjective decision-making criteria with clear, objective standards. This provides clarity for both applicants and review boards.</li>
+                <li><strong class="text-gray-900">Consolidated Review:</strong> Explore mechanisms for concurrent and consolidated review processes to reduce the number of meetings and shorten timelines.</li>
+                <li><strong class="text-gray-900">Strengthen Administrative Review:</strong> Empower staff to approve minor projects administratively that meet clear standards, freeing up board time for more complex proposals.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recommendations Section -->
+    <section id="recommendations">
+      <h2 class="text-3xl font-bold text-center mb-12 text-[#4A5568]">Path to a New Code</h2>
+      <div class="max-w-5xl mx-auto">
+        <div class="flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-4">
+          <div class="flex items-center flex-col md:flex-row text-center md:text-left">
+            <div class="bg-blue-500 text-white rounded-full h-16 w-16 flex items-center justify-center text-2xl font-bold shadow-lg">1</div>
+            <div class="mt-2 md:mt-0 md:ml-4">
+              <h3 class="font-semibold">New Framework</h3>
+              <p class="text-sm text-gray-600">Establish a new, simplified structure with clear articles for districts, uses, and standards.</p>
+            </div>
+          </div>
+          <div class="text-2xl text-gray-400 hidden md:block">→</div>
+          <div class="flex items-center flex-col md:flex-row text-center md:text-left">
+            <div class="bg-blue-500 text-white rounded-full h-16 w-16 flex items-center justify-center text-2xl font-bold shadow-lg">2</div>
+            <div class="mt-2 md:mt-0 md:ml-4">
+              <h3 class="font-semibold">Draft Content</h3>
+              <p class="text-sm text-gray-600">Rewrite articles with modern standards, a simplified use table, and new graphics.</p>
+            </div>
+          </div>
+          <div class="text-2xl text-gray-400 hidden md:block">→</div>
+          <div class="flex items-center flex-col md:flex-row text-center md:text-left">
+            <div class="bg-blue-500 text-white rounded-full h-16 w-16 flex items-center justify-center text-2xl font-bold shadow-lg">3</div>
+            <div class="mt-2 md:mt-0 md:ml-4">
+              <h3 class="font-semibold">Public Engagement</h3>
+              <p class="text-sm text-gray-600">Conduct extensive community outreach and workshops to gather feedback on the draft.</p>
+            </div>
+          </div>
+          <div class="text-2xl text-gray-400 hidden md:block">→</div>
+          <div class="flex items-center flex-col md:flex-row text-center md:text-left">
+            <div class="bg-blue-500 text-white rounded-full h-16 w-16 flex items-center justify-center text-2xl font-bold shadow-lg">4</div>
+            <div class="mt-2 md:mt-0 md:ml-4">
+              <h3 class="font-semibold">Adoption</h3>
+              <p class="text-sm text-gray-600">Present the final revised code to the City Council for review and formal adoption.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white mt-12 border-t">
+    <div class="mx-auto max-w-7xl px-6 py-8 lg:px-8">
+      <div class="text-center text-gray-500">
+        <p class="text-sm">&copy; 2025 Zoning Rewrite Initiative. This document is for analysis and planning purposes.</p>
+        <p class="text-sm mt-1">City of Lowell, Massachusetts</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileMenuButton = document.getElementById('mobile-menu-button');
+      const mobileMenu = document.getElementById('mobile-menu');
+
+      mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      const tabPanes = document.querySelectorAll('.tab-pane');
+
+      tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+
+          tabPanes.forEach(pane => pane.classList.add('hidden'));
+          const tabId = button.dataset.tab;
+          document.getElementById(`${tabId}-content`).classList.remove('hidden');
+        });
+      });
+      
+      // Set the first tab as active by default
+      if (tabButtons.length > 0) {
+        tabButtons[0].click();
+      }
+
+      const chartData = {
+        labels: ['Single Res.', 'Trad. Two-Family', 'Multi-Family', 'Downtown Mixed-Use', 'Suburban Commercial', 'Industrial', 'Institutional'],
+        datasets: {
+          total: [25, 30, 45, 70, 55, 40, 35],
+          permitted: [12, 15, 10, 25, 20, 18, 16],
+          special: [8, 10, 25, 35, 28, 15, 12]
+        }
+      };
+
+      const ctx = document.getElementById('districtsChart').getContext('2d');
+      let districtsChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: chartData.labels,
+          datasets: [{
+            label: 'Total Use Regulations',
+            data: chartData.datasets.total,
+            backgroundColor: 'rgba(59, 130, 246, 0.6)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return ` ${context.dataset.label}: ${context.raw}`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Number of Use Regulations'
+              }
+            },
+            x: {
+              ticks: {
+                maxRotation: 0,
+                minRotation: 0,
+                callback: function(value, index, values) {
+                  const label = this.getLabelForValue(value);
+                  return label.length > 15 ? label.substring(0, 15) + '...' : label;
+                }
+              }
+            }
+          }
+        }
+      });
+
+      const chartFilter = document.getElementById('chartFilter');
+      chartFilter.addEventListener('change', (e) => {
+        const filter = e.target.value;
+        let newData;
+        let newLabel;
+        let newColor;
+
+        if (filter === 'permitted') {
+          newData = chartData.datasets.permitted;
+          newLabel = 'Permitted Uses (By-Right)';
+          newColor = 'rgba(16, 185, 129, 0.6)';
+        } else if (filter === 'special') {
+          newData = chartData.datasets.special;
+          newLabel = 'Special Permit Uses';
+          newColor = 'rgba(245, 158, 11, 0.6)';
+        } else {
+          newData = chartData.datasets.total;
+          newLabel = 'Total Use Regulations';
+          newColor = 'rgba(59, 130, 246, 0.6)';
+        }
+
+        districtsChart.data.datasets[0].data = newData;
+        districtsChart.data.datasets[0].label = newLabel;
+        districtsChart.data.datasets[0].backgroundColor = newColor;
+        districtsChart.update();
+      });
+    });
+  </script>
+</body>
+
+</html>
