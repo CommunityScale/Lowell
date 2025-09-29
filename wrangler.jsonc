@@ -2,7 +2,6 @@
   "name": "lowell",
   "compatibility_date": "2025-09-02",
   "assets": {
-    "directory": "./",
-    "exclude": [".venv/**", "venv/**", "__pycache__/**", "*.pyc", ".git/**", ".github/**", "node_modules/**", "*.ipynb", "*.qgz", "uv.lock", "pyproject.toml"]
+    "directory": "./public"
   }
 }
