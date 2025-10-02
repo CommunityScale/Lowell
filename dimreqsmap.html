@@ -141,7 +141,8 @@
             <label><input type="checkbox" class="layer-toggle" value="Usable-Open-Space"> Insufficient usable open space per DU</label><br>
             <label><input type="checkbox" class="layer-toggle" value="Zones" checked> Existing zoning</label><br>
             <label><input type="checkbox" class="layer-toggle" value="Uses"> Existing use</label><br>
-            <label><input type="checkbox" class="layer-toggle" value="Variances">Variances</label>
+            <label><input type="checkbox" class="layer-toggle" value="Variances">Variances</label><br>
+            <label><input type="checkbox" class="layer-toggle" value="Overlays">Overlays</label>
         </div>
     </div>
     <div id="map"></div>
@@ -363,13 +364,13 @@
                 { color: varianceColors[7], label: 'Other', type: 'circle' },
             ],
 
-            // 'Overlay': [
-            //     { color: 'black', label: 'ROD' },
-            //     { color: '#0040fe', label: 'LCRAP' },
-            //     { color: '#21abe6', label: 'LCRA' },
-            //     { color: '#9971ff', label: 'MCMOD/MBTABR' },
-            //     { color: '#006663', label: 'MBTAW' }
-            // ]
+            'Overlays': [
+                 { color: 'black', label: 'Arts District' },
+                 { color: '#0040fe', label: 'Smart Growth District' },
+                 { color: '#21abe6', label: 'MBTA Multifamily - High Rise' },
+                 { color: '#9971ff', label: 'MBTA Multifamily - Mid Rise' },
+                 { color: '#006663', label: 'MBTA Multifamily - Neighborhood' }
+             ]
         };
 
                     let labelLayerId; //pull text fields on top!!
@@ -422,10 +423,10 @@
                 data: 'https://media.githubusercontent.com/media/CommunityScale/Lowell/main/lowellvariances.geojson',
             });
 
-            // map.addSource('overlays', {
-            //     type: 'geojson',
-            //     data: 'https://raw.githubusercontent.com/CommunityScale/Waltham/refs/heads/main/overlays.geojson'
-            // });
+            map.addSource('overlays', {
+                 type: 'geojson',
+                 data: 'lowelloverlays.geojson'
+             });
 
             // map.addSource('proposedzone', {
             //     type: 'geojson',
@@ -620,24 +621,24 @@
             // }, labelLayerId);
 
 
-            // map.addLayer({
-            //     id: 'Overlay',
-            //     type: 'line',
-            //     source: 'overlays',
-            //     paint: {
-            //         'line-width': 4,
-            //         'line-color': [
-            //             'match',
-            //             ['get', 'NAME'],
-            //             'ROD', 'black',
-            //             'LCRAP', '#0040fe',
-            //             'LCRA', '#21abe6',
-            //             'MCMOD', '#9971ff',
-            //             'MBTAW', '#006663',
-            //             'transparent' // default fallback color
-            //         ],
-            //     }
-            // }, labelLayerId);
+             map.addLayer({
+                 id: 'Overlays',
+                 type: 'line',
+                 source: 'overlays',
+                 paint: {
+                     'line-width': 4,
+                     'line-color': [
+                         'match',
+                         ['get', 'Name'],
+                         'Arts District', 'black',
+                         'Smart Growth District', '#0040fe',
+                         'MBTA Multifamily - High Rise', '#21abe6',
+                         'MBTA Multifamily - Mid Rise', '#9971ff',
+                         'MBTA Multifamily - Neighborhood', '#006663',
+                         'transparent' // default fallback color
+                     ],
+                 }
+             }, labelLayerId);
 
             map.addLayer({
                 id: 'Boundary',
@@ -687,6 +688,7 @@
             // map.setLayoutProperty('Overlay', 'visibility', 'none');
             map.setLayoutProperty('Uses', 'visibility', 'none');
             map.setLayoutProperty('Variances', 'visibility', 'none');
+            map.setLayoutProperty('Overlays', 'visibility', 'none');
             map.setLayoutProperty('settlement-major-label', 'visibility', 'visible');
             map.setLayoutProperty('settlement-subdivision-label', 'visibility', 'visible');
             map.setLayoutProperty('settlement-minor-label', 'visibility', 'visible');
