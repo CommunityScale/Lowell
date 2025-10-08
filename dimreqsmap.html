@@ -366,10 +366,10 @@
 
             'Overlays': [
                  { color: 'black', label: 'Arts District' },
-                 { color: '#0040fe', label: 'Smart Growth District' },
-                 { color: '#21abe6', label: 'MBTA Multifamily - High Rise' },
-                 { color: '#9971ff', label: 'MBTA Multifamily - Mid Rise' },
-                 { color: '#006663', label: 'MBTA Multifamily - Neighborhood' }
+                 { color: '#ff00ff', label: 'Smart Growth District' },
+                 { color: '#0000ff', label: 'MBTA Multifamily - High Rise' },
+                 { color: '#00ffff', label: 'MBTA Multifamily - Mid Rise' },
+                 { color: '#00ff00', label: 'MBTA Multifamily - Neighborhood' }
              ]
         };
 
@@ -621,23 +621,51 @@
             // }, labelLayerId);
 
 
-             map.addLayer({
-                 id: 'Overlays',
-                 type: 'line',
-                 source: 'overlays',
-                 paint: {
-                     'line-width': 4,
-                     'line-color': [
-                         'match',
-                         ['get', 'Name'],
-                         'Arts District', 'black',
-                         'Smart Growth District', '#0040fe',
-                         'MBTA Multifamily - High Rise', '#21abe6',
-                         'MBTA Multifamily - Mid Rise', '#9971ff',
-                         'MBTA Multifamily - Neighborhood', '#006663',
-                         'transparent' // default fallback color
-                     ],
-                 }
+            map.addLayer({
+                id: 'Overlays',
+                type: 'line',
+                source: 'overlays',
+                paint: {
+                    'line-width': [
+                        'match',
+                        ['get', 'Name'],
+                        'Arts District', 3,
+                        'Smart Growth District', 3,
+                        4 // default width for all others
+                    ],
+
+                    'line-color': [
+                        'match',
+                        ['get', 'Name'],
+                        'Arts District', 'black',
+                        'Smart Growth District', '#ff00ff',
+                        'MBTA Multifamily - High Rise', '#0000ff',
+                        'MBTA Multifamily - Neighborhood', '#00ff00',
+                        'MBTA Multifamily - Mid Rise', '#00ffff',
+                        'transparent' // default fallback color
+                    ],
+
+                    'line-dasharray': [
+                        'match',
+                        ['get', 'Name'],
+                        'Arts District', ['literal', [1, 1]],
+                        ['literal', [1, 0]] // solid line for all others
+]
+
+                },
+
+                layout: {
+                    'line-sort-key': [
+                        'match',
+                        ['get', 'Name'],
+                        'Arts District', 5,
+                        'Smart Growth District', 4,
+                        'MBTA Multifamily - High Rise', 3,
+                        'MBTA Multifamily - Neighborhood', 2,
+                        'MBTA Multifamily - Mid Rise', 1,
+                        0
+                    ],
+                }
              }, labelLayerId);
 
             map.addLayer({
@@ -851,10 +879,10 @@
                     const displayZone = zone === null || zone === undefined ? 'No available data' : `Zoning district: ${zone}`;
                     const use = selectedParcel.properties.UseCategory;
                     // const useDescription = useLabels[use] || "Unknown use";
-                    const displayUse = use === null || use === undefined ? 'Unknown use' : `Current use: ${use}`;
+                    const displayUse = use === null || use === undefined ? 'Unknown' : `Current use: ${use}`;
                     const lotSize = selectedParcel.properties.res_lot_size_sf;
                     const roundedLotSize = Math.round(lotSize)
-                    const displaySize = lotSize === null || lotSize === undefined ? 'No available data' : `Lot size: ${roundedLotSize.toLocaleString("en-US")} square feet`;
+                    const displaySize = lotSize === null || lotSize === undefined ? 'Lot size: No data' : `Lot size: ${roundedLotSize.toLocaleString("en-US")} square feet`;
 
 
                     new mapboxgl.Popup({ closeButton: true }, { clickToClose: true })
