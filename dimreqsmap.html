@@ -365,7 +365,8 @@
             ],
 
             'Overlays': [
-                 { color: 'black', label: 'Arts District' },
+                 { color: 'black', label: 'Arts District'},
+                 { color: 'teal', label: 'Downtown Overlay'},
                  { color: '#ff00ff', label: 'Smart Growth District' },
                  { color: '#0000ff', label: 'MBTA Multifamily - High Rise' },
                  { color: '#00ffff', label: 'MBTA Multifamily - Mid Rise' },
@@ -425,7 +426,7 @@
 
             map.addSource('overlays', {
                  type: 'geojson',
-                 data: 'https://media.githubusercontent.com/media/CommunityScale/Lowell/main/lowelloverlays.geojson'
+                 data: 'https://media.githubusercontent.com/media/CommunityScale/Lowell/main/lowelloverlays2.geojson'
              });
 
             // map.addSource('proposedzone', {
@@ -638,6 +639,7 @@
                         'match',
                         ['get', 'Name'],
                         'Arts District', 'black',
+                        'Downtown Overlay', 'teal',
                         'Smart Growth District', '#ff00ff',
                         'MBTA Multifamily - High Rise', '#0000ff',
                         'MBTA Multifamily - Neighborhood', '#00ff00',
@@ -645,12 +647,12 @@
                         'transparent' // default fallback color
                     ],
 
-                    'line-dasharray': [
+                    /*'line-dasharray': [
                         'match',
                         ['get', 'Name'],
                         'Arts District', ['literal', [1, 1]],
                         ['literal', [1, 0]] // solid line for all others
-]
+]*/
 
                 },
 
