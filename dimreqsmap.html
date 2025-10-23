@@ -121,6 +121,23 @@
             margin-right: 5px;
             width: 10px;
         }
+
+        /* Nested checkbox styles */
+        .overlay-sub-controls {
+            margin-left: 20px;
+            display: none;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .overlay-sub-controls.visible {
+            display: block;
+        }
+
+        .overlay-sub-controls label {
+            display: block;
+            margin: 3px 0;
+        }
     </style>
     <div id="container">
         <div id="layer-controls">
@@ -142,7 +159,15 @@
             <label><input type="checkbox" class="layer-toggle" value="Zones" checked> Existing zoning</label><br>
             <label><input type="checkbox" class="layer-toggle" value="Uses"> Existing use</label><br>
             <label><input type="checkbox" class="layer-toggle" value="Variances">Variances</label><br>
-            <label><input type="checkbox" class="layer-toggle" value="Overlays">Overlays</label>
+            <label><input type="checkbox" id="overlays-parent" class="layer-toggle" value="Overlays">Overlays</label>
+            <div id="overlay-sub-controls" class="overlay-sub-controls">
+                <label><input type="checkbox" class="overlay-toggle" value="Arts-District"> Arts District</label>
+                <label><input type="checkbox" class="overlay-toggle" value="Downtown"> Downtown Overlay</label>
+                <label><input type="checkbox" class="overlay-toggle" value="Smart-Growth"> Smart Growth District</label>
+                <label><input type="checkbox" class="overlay-toggle" value="High-Rise"> MBTA Multifamily - High Rise</label>
+                <label><input type="checkbox" class="overlay-toggle" value="Mid-Rise"> MBTA Multifamily - Mid Rise</label>
+                <label><input type="checkbox" class="overlay-toggle" value="Neighborhood"> MBTA Multifamily - Neighborhood</label>
+            </div>
         </div>
     </div>
     <div id="map"></div>
@@ -365,12 +390,12 @@
             ],
 
             'Overlays': [
-                 { color: 'black', label: 'Arts District'},
-                 { color: 'teal', label: 'Downtown Overlay'},
-                 { color: '#ff00ff', label: 'Smart Growth District' },
-                 { color: '#0000ff', label: 'MBTA Multifamily - High Rise' },
-                 { color: '#00ffff', label: 'MBTA Multifamily - Mid Rise' },
-                 { color: '#00ff00', label: 'MBTA Multifamily - Neighborhood' }
+                 { color: 'aqua', label: 'Arts District'},
+                 { color: 'blue', label: 'Downtown Overlay'},
+                 { color: 'lime', label: 'Smart Growth District' },
+                 { color: 'red', label: 'MBTA Multifamily - High Rise' },
+                 { color: 'orange', label: 'MBTA Multifamily - Mid Rise' },
+                 { color: 'yellow', label: 'MBTA Multifamily - Neighborhood' }
              ]
         };
 
@@ -387,7 +412,7 @@
         map.on('load', () => {
             // Set the default atmosphere style
             map.setFog({});
-
+ 
             map.addSource('mapillary', {
                 'type': 'vector',
                 'tiles': [
@@ -622,53 +647,117 @@
             // }, labelLayerId);
 
 
+                           // Overlays with hatched fills for MBTA layers
+            // High Rise - hatched fill
             map.addLayer({
-                id: 'Overlays',
+                id: 'Overlays-High-Rise-Fill',
+                type: 'fill',
+                source: 'overlays',
+                filter: ['==', ['get', 'Name'], 'MBTA Multifamily - High Rise'],
+                paint: {
+                    'fill-color': 'red',
+                    'fill-opacity': 0.6
+                }
+            }, labelLayerId);
+
+            // High Rise - outline
+            map.addLayer({
+                id: 'Overlays-High-Rise-Line',
                 type: 'line',
                 source: 'overlays',
+                filter: ['==', ['get', 'Name'], 'MBTA Multifamily - High Rise'],
                 paint: {
-                    'line-width': [
-                        'match',
-                        ['get', 'Name'],
-                        'Arts District', 3,
-                        'Smart Growth District', 3,
-                        4 // default width for all others
-                    ],
-
-                    'line-color': [
-                        'match',
-                        ['get', 'Name'],
-                        'Arts District', 'black',
-                        'Downtown Overlay', 'teal',
-                        'Smart Growth District', '#ff00ff',
-                        'MBTA Multifamily - High Rise', '#0000ff',
-                        'MBTA Multifamily - Neighborhood', '#00ff00',
-                        'MBTA Multifamily - Mid Rise', '#00ffff',
-                        'transparent' // default fallback color
-                    ],
-
-                    /*'line-dasharray': [
-                        'match',
-                        ['get', 'Name'],
-                        'Arts District', ['literal', [1, 1]],
-                        ['literal', [1, 0]] // solid line for all others
-]*/
-
-                },
-
-                layout: {
-                    'line-sort-key': [
-                        'match',
-                        ['get', 'Name'],
-                        'Arts District', 5,
-                        'Smart Growth District', 4,
-                        'MBTA Multifamily - High Rise', 3,
-                        'MBTA Multifamily - Neighborhood', 2,
-                        'MBTA Multifamily - Mid Rise', 1,
-                        0
-                    ],
+                    'line-color': 'red',
+                    'line-width': 3
                 }
-             }, labelLayerId);
+            }, labelLayerId);
+
+            // Neighborhood - hatched fill
+            map.addLayer({
+                id: 'Overlays-Neighborhood-Fill',
+                type: 'fill',
+                source: 'overlays',
+                filter: ['==', ['get', 'Name'], 'MBTA Multifamily - Neighborhood'],
+                paint: {
+                    'fill-color': 'yellow',
+                    'fill-opacity': 0.6
+                }
+            }, labelLayerId);
+
+            // Neighborhood - outline
+            map.addLayer({
+                id: 'Overlays-Neighborhood-Line',
+                type: 'line',
+                source: 'overlays',
+                filter: ['==', ['get', 'Name'], 'MBTA Multifamily - Neighborhood'],
+                paint: {
+                    'line-color': 'yellow',
+                    'line-width': 3
+                }
+            }, labelLayerId);
+
+            // Mid Rise - hatched fill
+            map.addLayer({
+                id: 'Overlays-Mid-Rise-Fill',
+                type: 'fill',
+                source: 'overlays',
+                filter: ['==', ['get', 'Name'], 'MBTA Multifamily - Mid Rise'],
+                paint: {
+                    'fill-color': 'orange',
+                    'fill-opacity': 0.6
+                }
+            }, labelLayerId);
+
+            // Mid Rise - outline
+            map.addLayer({
+                id: 'Overlays-Mid-Rise-Line',
+                type: 'line',
+                source: 'overlays',
+                filter: ['==', ['get', 'Name'], 'MBTA Multifamily - Mid Rise'],
+                paint: {
+                    'line-color': 'orange',
+                    'line-width': 3
+                }
+            }, labelLayerId);
+
+            // Other overlays (Arts District, Downtown, Smart Growth) - just lines
+            // Arts District
+            map.addLayer({
+                id: 'Overlays-Arts-District',
+                type: 'line',
+                source: 'overlays',
+                filter: ['==', ['get', 'Name'], 'Arts District'],
+                paint: {
+                    'line-color': 'aqua',
+                    'line-width': 3
+                }
+            }, labelLayerId);
+
+            // Downtown Overlay
+            map.addLayer({
+                id: 'Overlays-Downtown',
+                type: 'line',
+                source: 'overlays',
+                filter: ['==', ['get', 'Name'], 'Downtown Overlay'],
+                paint: {
+                    'line-width': 3,
+                    'line-color': 'blue'
+                }
+            }, labelLayerId);
+
+            // Smart Growth District
+            map.addLayer({
+                id: 'Overlays-Smart-Growth',
+                type: 'line',
+                source: 'overlays',
+                filter: ['==', ['get', 'Name'], 'Smart Growth District'],
+                paint: {
+                    'line-width': 3,
+                    'line-color': 'lime'
+                }
+            }, labelLayerId);
+
+
 
             map.addLayer({
                 id: 'Boundary',
@@ -718,13 +807,77 @@
             // map.setLayoutProperty('Overlay', 'visibility', 'none');
             map.setLayoutProperty('Uses', 'visibility', 'none');
             map.setLayoutProperty('Variances', 'visibility', 'none');
-            map.setLayoutProperty('Overlays', 'visibility', 'none');
+            
+            // Set all overlay layers to none initially
+            map.setLayoutProperty('Overlays-High-Rise-Fill', 'visibility', 'none');
+            map.setLayoutProperty('Overlays-High-Rise-Line', 'visibility', 'none');
+            map.setLayoutProperty('Overlays-Neighborhood-Fill', 'visibility', 'none');
+            map.setLayoutProperty('Overlays-Neighborhood-Line', 'visibility', 'none');
+            map.setLayoutProperty('Overlays-Mid-Rise-Fill', 'visibility', 'none');
+            map.setLayoutProperty('Overlays-Mid-Rise-Line', 'visibility', 'none');
+            map.setLayoutProperty('Overlays-Arts-District', 'visibility', 'none');
+            map.setLayoutProperty('Overlays-Downtown', 'visibility', 'none');
+            map.setLayoutProperty('Overlays-Smart-Growth', 'visibility', 'none');
+            
             map.setLayoutProperty('settlement-major-label', 'visibility', 'visible');
             map.setLayoutProperty('settlement-subdivision-label', 'visibility', 'visible');
             map.setLayoutProperty('settlement-minor-label', 'visibility', 'visible');
             // map.moveLayer('road-label', 'Zones');
+           
+
 
             const checkboxes = document.querySelectorAll('.layer-toggle');
+
+            // Overlay layer mappings
+            const overlayLayerMap = {
+                'Arts-District': ['Overlays-Arts-District'],
+                'Downtown': ['Overlays-Downtown'],
+                'Smart-Growth': ['Overlays-Smart-Growth'],
+                'High-Rise': ['Overlays-High-Rise-Fill', 'Overlays-High-Rise-Line'],
+                'Mid-Rise': ['Overlays-Mid-Rise-Fill', 'Overlays-Mid-Rise-Line'],
+                'Neighborhood': ['Overlays-Neighborhood-Fill', 'Overlays-Neighborhood-Line']
+            };
+
+            // Handle parent Overlays checkbox
+            const overlaysParent = document.getElementById('overlays-parent');
+            const overlaySubControls = document.getElementById('overlay-sub-controls');
+            const overlayToggles = document.querySelectorAll('.overlay-toggle');
+
+            overlaysParent.addEventListener('change', () => {
+                if (overlaysParent.checked) {
+                    overlaySubControls.classList.add('visible');
+                } else {
+                    overlaySubControls.classList.remove('visible');
+                    // Uncheck and hide all sub-overlays
+                    overlayToggles.forEach(toggle => {
+                        toggle.checked = false;
+                        const layers = overlayLayerMap[toggle.value];
+                        if (layers) {
+                            layers.forEach(layerId => {
+                                if (map.getLayer(layerId)) {
+                                    map.setLayoutProperty(layerId, 'visibility', 'none');
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+
+            // Handle individual overlay toggles
+            overlayToggles.forEach(toggle => {
+                toggle.addEventListener('change', () => {
+                    const visibility = toggle.checked ? 'visible' : 'none';
+                    const layers = overlayLayerMap[toggle.value];
+                    
+                    if (layers) {
+                        layers.forEach(layerId => {
+                            if (map.getLayer(layerId)) {
+                                map.setLayoutProperty(layerId, 'visibility', visibility);
+                            }
+                        });
+                    }
+                });
+            });
 
             const legends = {
                 // 'Too-Little-Frontage': 'frontageLegend',
@@ -741,6 +894,12 @@
             checkboxes.forEach((checkbox) => {
                 checkbox.addEventListener('change', () => {
                     const layerId = checkbox.value;
+                    
+                    // Skip Overlays parent - it's handled separately
+                    if (layerId === 'Overlays') {
+                        return;
+                    }
+                    
                     const visibility = checkbox.checked ? 'visible' : 'none';
                     if (map.getLayer(layerId)) {
                         map.setLayoutProperty(layerId, 'visibility', visibility);
