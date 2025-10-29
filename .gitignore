@@ -1,2 +1,4 @@
 /shp/
-.venv/
+.venv/.DS_Store
+/nonconformity_analysis/
+/.DS_Store
