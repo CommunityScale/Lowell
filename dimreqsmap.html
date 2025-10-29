@@ -147,15 +147,6 @@
 
             <label><input type="checkbox" class="layer-toggle" value="Lot-Sizes-of-Residential-Parcels"> Lot
                 size</label><br>
-            <!-- <label><input type="checkbox" class="layer-toggle" value="Too-Little-Frontage"> Insufficient
-                frontage</label><br> -->
-            <label><input type="checkbox" class="layer-toggle"
-                    value="Residential-Parcels-Smaller-than-Minimum-Lot-Size"> Insufficient lot size</label><br>
-            <label><input type="checkbox" class="layer-toggle" value="Insufficient-Lot-Area-Per-DU"> Insufficient lot area per DU</label><br>
-            <!-- <label><input type="checkbox" class="layer-toggle" value="Overlay"> Overlays</label><br> -->
-            <!-- <label><input type="checkbox" class="layer-toggle" value="Too-Little-Setback"> Insufficient front
-                setback</label><br> -->
-            <label><input type="checkbox" class="layer-toggle" value="Usable-Open-Space"> Insufficient usable open space per DU</label><br>
             <label><input type="checkbox" class="layer-toggle" value="Zones" checked> Existing zoning</label><br>
             <label><input type="checkbox" class="layer-toggle" value="Uses"> Existing use</label><br>
             <label><input type="checkbox" class="layer-toggle" value="Variances">Variances</label><br>
@@ -166,8 +157,19 @@
                 <label><input type="checkbox" class="overlay-toggle" value="Smart-Growth"> Smart Growth District</label>
                 <label><input type="checkbox" class="overlay-toggle" value="High-Rise"> MBTA Multifamily - High Rise</label>
                 <label><input type="checkbox" class="overlay-toggle" value="Mid-Rise"> MBTA Multifamily - Mid Rise</label>
-                <label><input type="checkbox" class="overlay-toggle" value="Neighborhood"> MBTA Multifamily - Neighborhood</label>
-            </div>
+                <label><input type="checkbox" class="overlay-toggle" value="Neighborhood"> MBTA Multifamily - Neighborhood</label></div><br>
+            <!-- <label><input type="checkbox" class="layer-toggle" value="Too-Little-Frontage"> Insufficient
+                frontage</label><br> -->
+            <label><input type="checkbox" class="layer-toggle"
+                    value="Residential-Parcels-Smaller-than-Minimum-Lot-Size"> Insufficient lot size</label><br>
+            <label><input type="checkbox" class="layer-toggle" value="Insufficient-Lot-Area-Per-DU"> Insufficient lot area per DU</label><br>
+            <!-- <label><input type="checkbox" class="layer-toggle" value="Overlay"> Overlays</label><br> -->
+            <!-- <label><input type="checkbox" class="layer-toggle" value="Too-Little-Setback"> Insufficient front
+                setback</label><br> -->
+            <label><input type="checkbox" class="layer-toggle" value="Usable-Open-Space"> Insufficient usable open space per DU</label><br>
+            <label><input type="checkbox" class="layer-toggle" value="Nonconforming-Use"> Nonconforming Use</label><br>
+
+            
         </div>
     </div>
     <div id="map"></div>
@@ -562,6 +564,20 @@
                         'match',
                         ['get', 'res_ncf_min_lot_size'],
                         '1', 'rgba(0, 0, 0, .25)',  // String "1" instead of number 1
+                        'rgba(0, 0, 0, 0)'
+                    ]
+                }
+            }, labelLayerId);
+
+            map.addLayer({
+                id: 'Nonconforming-Use',
+                type: 'fill',
+                source: 'allparcels',
+                paint: {
+                    'fill-color': [
+                        'match',
+                        ['get', 'use_nc'],
+                        1, 'rgba(0, 0, 0, .25)',  
                         'rgba(0, 0, 0, 0)'
                     ]
                 }
