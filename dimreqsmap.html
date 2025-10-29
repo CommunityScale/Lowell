@@ -147,15 +147,13 @@
 
             <label><input type="checkbox" class="layer-toggle" value="Lot-Sizes-of-Residential-Parcels"> Lot
                 size</label><br>
-            <!-- <label><input type="checkbox" class="layer-toggle" value="Too-Little-Frontage"> Insufficient
-                frontage</label><br> -->
-            <label><input type="checkbox" class="layer-toggle"
-                    value="Residential-Parcels-Smaller-than-Minimum-Lot-Size"> Insufficient lot size</label><br>
-            <label><input type="checkbox" class="layer-toggle" value="Insufficient-Lot-Area-Per-DU"> Insufficient lot area per DU</label><br>
-            <!-- <label><input type="checkbox" class="layer-toggle" value="Overlay"> Overlays</label><br> -->
-            <!-- <label><input type="checkbox" class="layer-toggle" value="Too-Little-Setback"> Insufficient front
-                setback</label><br> -->
-            <label><input type="checkbox" class="layer-toggle" value="Usable-Open-Space"> Insufficient usable open space per DU</label><br>
+            <label><input type="checkbox" id="nonconforming-parent" class="layer-toggle" value="Nonconforming">Non-conforming parcels</label><br>
+            <div id="nonconforming-sub-controls" class="overlay-sub-controls">
+                <label><input type="checkbox" class="nonconforming-toggle" value="Frontage-Segments"> Insufficient frontage</label>
+                <label><input type="checkbox" class="nonconforming-toggle" value="Residential-Parcels-Smaller-than-Minimum-Lot-Size"> Insufficient lot size</label>
+                <label><input type="checkbox" class="nonconforming-toggle" value="Insufficient-Lot-Area-Per-DU"> Insufficient lot area per DU</label>
+                <label><input type="checkbox" class="nonconforming-toggle" value="Usable-Open-Space"> Insufficient usable open space per DU</label>
+            </div>
             <label><input type="checkbox" class="layer-toggle" value="Zones" checked> Existing zoning</label><br>
             <label><input type="checkbox" class="layer-toggle" value="Uses"> Existing use</label><br>
             <label><input type="checkbox" class="layer-toggle" value="Variances">Variances</label><br>
@@ -334,9 +332,9 @@
             'Usable-Open-Space': [
                 { color: 'rgba(0, 0, 0, .2)', label: 'Not enough usable open space per dwelling unit' }
             ],
-            // 'Too-Little-Frontage': [
-            //     { color: 'black', label: 'Frontage narrower than required by zone' }
-            // ],
+            'Frontage-Segments': [
+                { color: 'rgba(128, 128, 128, 0.5)', label: 'Frontage narrower than required by zone' }
+            ],
             'Residential-Parcels-Smaller-than-Minimum-Lot-Size': [
                 { color: 'rgba(0, 0, 0, .2)', label: 'Lot smaller than required by zone' }
             ],
@@ -423,10 +421,10 @@
             })
 
 
-            // map.addSource('frontage', {
-            //     type: 'geojson',
-            //     data: 'https://raw.githubusercontent.com/CommunityScale/bucket/295f52b99d3948e011b175e39838fb50cbcf8a8a/parcel-segments.geojson'
-            // });
+            map.addSource('frontage', {
+                type: 'geojson',
+                data: 'https://media.githubusercontent.com/media/CommunityScale/Lowell/main/ncf_frontage_segments.geojson'
+            });
 
             // map.addSource('hydro', {
             //     type: 'geojson',
@@ -603,21 +601,6 @@
                 }
             }, labelLayerId);
 
-            // map.addLayer({
-            //     id: 'Too-Little-Frontage',
-            //     type: 'line',
-            //     source: 'frontage',
-            //     paint: {
-            //         'line-width': 4,
-            //         'line-color': [
-            //             'match',
-            //             ['get', 'ncf_min_frontage'],
-            //             1, 'black',
-            //             'transparent' // default fallback color
-            //         ],
-            //     }
-            // }, labelLayerId);
-
             map.addLayer({
                 id: 'Usable-Open-Space',
                 type: 'fill',
@@ -793,11 +776,22 @@
                 }
             }, labelLayerId);
 
+            // Add Frontage-Segments layer on top so it's visible
+            map.addLayer({
+                id: 'Frontage-Segments',
+                type: 'line',
+                source: 'frontage',
+                paint: {
+                    'line-width': 6,
+                    'line-color': 'rgba(128, 128, 128, 0.4)',
+                }
+            });
+
             window.addEventListener('resize', () => {
                 map.resize();
             });
 
-            // map.setLayoutProperty('Too-Little-Frontage', 'visibility', 'none');
+            map.setLayoutProperty('Frontage-Segments', 'visibility', 'none');
             map.setLayoutProperty('Residential-Parcels-Smaller-than-Minimum-Lot-Size', 'visibility', 'none');
             map.setLayoutProperty('Insufficient-Lot-Area-Per-DU', 'visibility', 'none');
             map.setLayoutProperty('Lot-Sizes-of-Residential-Parcels', 'visibility', 'none');
@@ -807,7 +801,7 @@
             // map.setLayoutProperty('Overlay', 'visibility', 'none');
             map.setLayoutProperty('Uses', 'visibility', 'none');
             map.setLayoutProperty('Variances', 'visibility', 'none');
-            
+
             // Set all overlay layers to none initially
             map.setLayoutProperty('Overlays-High-Rise-Fill', 'visibility', 'none');
             map.setLayoutProperty('Overlays-High-Rise-Line', 'visibility', 'none');
@@ -818,10 +812,17 @@
             map.setLayoutProperty('Overlays-Arts-District', 'visibility', 'none');
             map.setLayoutProperty('Overlays-Downtown', 'visibility', 'none');
             map.setLayoutProperty('Overlays-Smart-Growth', 'visibility', 'none');
-            
-            map.setLayoutProperty('settlement-major-label', 'visibility', 'visible');
-            map.setLayoutProperty('settlement-subdivision-label', 'visibility', 'visible');
-            map.setLayoutProperty('settlement-minor-label', 'visibility', 'visible');
+
+            // Set settlement labels visibility (check if they exist first)
+            if (map.getLayer('settlement-major-label')) {
+                map.setLayoutProperty('settlement-major-label', 'visibility', 'visible');
+            }
+            if (map.getLayer('settlement-subdivision-label')) {
+                map.setLayoutProperty('settlement-subdivision-label', 'visibility', 'visible');
+            }
+            if (map.getLayer('settlement-minor-label')) {
+                map.setLayoutProperty('settlement-minor-label', 'visibility', 'visible');
+            }
             // map.moveLayer('road-label', 'Zones');
            
 
@@ -837,6 +838,41 @@
                 'Mid-Rise': ['Overlays-Mid-Rise-Fill', 'Overlays-Mid-Rise-Line'],
                 'Neighborhood': ['Overlays-Neighborhood-Fill', 'Overlays-Neighborhood-Line']
             };
+
+            // Handle parent Nonconforming checkbox
+            const nonconformingParent = document.getElementById('nonconforming-parent');
+            const nonconformingSubControls = document.getElementById('nonconforming-sub-controls');
+            const nonconformingToggles = document.querySelectorAll('.nonconforming-toggle');
+
+            nonconformingParent.addEventListener('change', () => {
+                if (nonconformingParent.checked) {
+                    nonconformingSubControls.classList.add('visible');
+                } else {
+                    nonconformingSubControls.classList.remove('visible');
+                    // Uncheck and hide all sub-layers
+                    nonconformingToggles.forEach(toggle => {
+                        toggle.checked = false;
+                        const layerId = toggle.value;
+                        if (map.getLayer(layerId)) {
+                            map.setLayoutProperty(layerId, 'visibility', 'none');
+                        }
+                    });
+                    rebuildLegend();
+                }
+            });
+
+            // Handle individual nonconforming toggles
+            nonconformingToggles.forEach(toggle => {
+                toggle.addEventListener('change', () => {
+                    const visibility = toggle.checked ? 'visible' : 'none';
+                    const layerId = toggle.value;
+
+                    if (map.getLayer(layerId)) {
+                        map.setLayoutProperty(layerId, 'visibility', visibility);
+                    }
+                    rebuildLegend();
+                });
+            });
 
             // Handle parent Overlays checkbox
             const overlaysParent = document.getElementById('overlays-parent');
@@ -868,7 +904,7 @@
                 toggle.addEventListener('change', () => {
                     const visibility = toggle.checked ? 'visible' : 'none';
                     const layers = overlayLayerMap[toggle.value];
-                    
+
                     if (layers) {
                         layers.forEach(layerId => {
                             if (map.getLayer(layerId)) {
@@ -894,19 +930,25 @@
             checkboxes.forEach((checkbox) => {
                 checkbox.addEventListener('change', () => {
                     const layerId = checkbox.value;
-                    
-                    // Skip Overlays parent - it's handled separately
-                    if (layerId === 'Overlays') {
+
+                    // Skip parent checkboxes - they're handled separately
+                    if (layerId === 'Overlays' || layerId === 'Nonconforming') {
                         return;
                     }
-                    
+
                     const visibility = checkbox.checked ? 'visible' : 'none';
                     if (map.getLayer(layerId)) {
                         map.setLayoutProperty(layerId, 'visibility', visibility);
-                        map.setLayoutProperty('settlement-major-label', 'visibility', 'visible');
-                        map.setLayoutProperty('settlement-subdivision-label', 'visibility', 'visible');
-                        map.setLayoutProperty('settlement-minor-label', 'visibility', 'visible');
-                        // map.setLayoutProperty('road-label', 'visibility', 'visible');
+                        // Keep settlement labels visible (check if they exist first)
+                        if (map.getLayer('settlement-major-label')) {
+                            map.setLayoutProperty('settlement-major-label', 'visibility', 'visible');
+                        }
+                        if (map.getLayer('settlement-subdivision-label')) {
+                            map.setLayoutProperty('settlement-subdivision-label', 'visibility', 'visible');
+                        }
+                        if (map.getLayer('settlement-minor-label')) {
+                            map.setLayoutProperty('settlement-minor-label', 'visibility', 'visible');
+                        }
                     }
 
                     // Instead of trying to show/hide predefined legends, let's dynamically rebuild
@@ -942,6 +984,7 @@
                 const legendContainer = document.getElementById('legend-container');
                 legendContainer.innerHTML = ''; // Clear all
 
+                // Check regular checkboxes
                 Array.from(checkboxes).forEach(cb => {
                     if (cb.checked && legendEntries[cb.value]) {
                         const entries = legendEntries[cb.value];
@@ -951,6 +994,30 @@
 
                         const title = document.createElement('h4');
                         title.textContent = cb.value.replace(/-/g, ' ');
+                        legendSection.appendChild(title);
+
+                        entries.forEach(entry => {
+                            const item = document.createElement('div');
+                            item.innerHTML = `
+                    <span style="background:${entry.color};"></span>${entry.label}
+                `;
+                            legendSection.appendChild(item);
+                        });
+
+                        legendContainer.appendChild(legendSection);
+                    }
+                });
+
+                // Check nonconforming sub-toggles
+                Array.from(nonconformingToggles).forEach(toggle => {
+                    if (toggle.checked && legendEntries[toggle.value]) {
+                        const entries = legendEntries[toggle.value];
+
+                        const legendSection = document.createElement('div');
+                        legendSection.className = 'legend';
+
+                        const title = document.createElement('h4');
+                        title.textContent = toggle.value.replace(/-/g, ' ');
                         legendSection.appendChild(title);
 
                         entries.forEach(entry => {
